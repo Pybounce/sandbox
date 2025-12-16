@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CodeMirror Demo</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      #editor {
+        height: 90%;
+        width: 45%;
+        border: 1px solid #000;
+        overflow: auto;
+      }
+      #editor .cm-editor {
+        height: 100%;
+        width: 100%;
+      }
+      #output {
+        height: 90%;
+        width: 45%;
+        border: 1px solid #000;
+        overflow: auto;
+      }
+      #view {
+        height: 90%;
+        margin-left: 10%;
+        margin-right: 10%;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        display: flex;
+        flex-direction: column;
+      }
+      #body {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      #header {
+        height: auto;
+        width: auto;
+        margin-bottom: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="view">
+      <h1 id="header">Sandbox</h1>
+      <div id="body">
+        <div id="editor"></div>
+        <div id="output"></div>
+      </div>
+    </div>
+    <script type="module">
+      import { EditorView, basicSetup } from "https://esm.sh/codemirror";
+      import { javascript } from "https://esm.sh/@codemirror/lang-javascript";
+      import { indentWithTab } from "https://esm.sh/@codemirror/commands";
+      new EditorView({
+        doc: "print('hello world');",
+        extensions: [basicSetup, javascript()],
+        parent: document.getElementById("editor"),
+      });
+      import init, { WasmVm } from "./pkg/my_crate.js";
+
+      console.log("A");
+      await init();
+      console.log("B");
+
+      const vm = new WasmVm();
+      const result = vm.interpret("var a = 2");
+      document.getElementById("output").textContent = "asd";
+    </script>
+    <script src="sandbox.js"></script>
+  </body>
+</html>
