@@ -67,9 +67,9 @@
       });
       import init, { WasmVm } from "./pkg/my_crate.js";
 
-      console.log("A");
+      console.log("initing");
       await init();
-      console.log("B");
+      console.log("init success");
 
       const vm = new WasmVm();
       const result = vm.interpret("var a = 2");
