@@ -1,5 +1,24 @@
 let wasm;
 
+function getArrayJsValueFromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    const mem = getDataViewMemory0();
+    const result = [];
+    for (let i = ptr; i < ptr + 4 * len; i += 4) {
+        result.push(wasm.__wbindgen_externrefs.get(mem.getUint32(i, true)));
+    }
+    wasm.__externref_drop_slice(ptr, len);
+    return result;
+}
+
+let cachedDataViewMemory0 = null;
+function getDataViewMemory0() {
+    if (cachedDataViewMemory0 === null || cachedDataViewMemory0.buffer.detached === true || (cachedDataViewMemory0.buffer.detached === undefined && cachedDataViewMemory0.buffer !== wasm.memory.buffer)) {
+        cachedDataViewMemory0 = new DataView(wasm.memory.buffer);
+    }
+    return cachedDataViewMemory0;
+}
+
 function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return decodeText(ptr, len);
@@ -92,6 +111,13 @@ const WasmVmFinalization = (typeof FinalizationRegistry === 'undefined')
     : new FinalizationRegistry(ptr => wasm.__wbg_wasmvm_free(ptr >>> 0, 1));
 
 export class CompilerErr {
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(CompilerErr.prototype);
+        obj.__wbg_ptr = ptr;
+        CompilerErrFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
@@ -161,6 +187,37 @@ export class Output {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_output_free(ptr, 0);
+    }
+    /**
+     * @returns {boolean}
+     */
+    get success() {
+        const ret = wasm.output_success(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
+     * @returns {CompilerErr[]}
+     */
+    get compile_errors() {
+        const ret = wasm.output_compile_errors(this.__wbg_ptr);
+        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+        return v1;
+    }
+    /**
+     * @returns {string}
+     */
+    get runtime_error() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.output_runtime_error(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
     }
 }
 if (Symbol.dispose) Output.prototype[Symbol.dispose] = Output.prototype.free;
@@ -233,9 +290,8 @@ function __wbg_get_imports() {
     imports.wbg.__wbg___wbindgen_throw_dd24417ed36fc46e = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_cast_2241b6af4c4b2941 = function(arg0, arg1) {
-        // Cast intrinsic for `Ref(String) -> Externref`.
-        const ret = getStringFromWasm0(arg0, arg1);
+    imports.wbg.__wbg_compilererr_new = function(arg0) {
+        const ret = CompilerErr.__wrap(arg0);
         return ret;
     };
     imports.wbg.__wbindgen_init_externref_table = function() {
@@ -254,6 +310,7 @@ function __wbg_get_imports() {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
+    cachedDataViewMemory0 = null;
     cachedUint8ArrayMemory0 = null;
 
 
