@@ -58,11 +58,13 @@
     </div>
     <script type="module">
       import { EditorView, basicSetup } from "https://esm.sh/codemirror";
-      import { javascript } from "https://esm.sh/@codemirror/lang-javascript";
+      import { python } from "https://esm.sh/@codemirror/lang-python";
       import { indentWithTab } from "https://esm.sh/@codemirror/commands";
+      import { keymap } from "https://esm.sh/@codemirror/view";
+
       new EditorView({
-        doc: "print('hello world');",
-        extensions: [basicSetup, javascript()],
+        doc: "",
+        extensions: [basicSetup, keymap.of([indentWithTab]), python()],
         parent: document.getElementById("editor"),
       });
       import init, { WasmVm } from "./pkg/bytecode_wasm.js";
