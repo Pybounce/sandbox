@@ -100,9 +100,9 @@
       await init()
       console.log("init success")
 
-      const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
-
       function click_play() {
+        const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
+
         let source = editor_view.state.doc.toString()
         const vm = new WasmVm()
         const result = vm.interpret(source, [printFn])
