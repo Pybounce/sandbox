@@ -99,9 +99,19 @@
 
       import init, { WasmVm, JsNativeFn } from "./pkg/bytecode_wasm.js"
 
-      function writeToOutputDiv(text) {
+      function write_to_output(text) {
         const div = document.getElementById("output")
         div.textContent += text + "\n"
+      }
+
+      function write_error(text) {
+        const div = document.getElementById("output")
+        div.textContent += "[ERROR] " + text + "\n"
+      }
+
+      function clear_output() {
+        const div = document.getElementById("output")
+        div.textContent = ""
       }
 
       console.log("initing")
@@ -109,7 +119,8 @@
       console.log("init success")
 
       function click_play() {
-        const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
+        clear_output()
+        const printFn = new JsNativeFn("print", 1, write_to_output)
 
         let source = editor_view.state.doc.toString()
         const vm = new WasmVm()
@@ -120,7 +131,7 @@
         } else if (result.compile_errors.length > 0) {
           console.log("Compile errors:")
           for (let err of result.compile_errors) {
-            console.log(`Line ${err.line}, start ${err.start}, len ${err.len}`)
+            write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`)
           }
           editor_view.dispatch({
             effects: StateEffect.appendConfig.of(
@@ -128,7 +139,7 @@
             ),
           })
         } else if (result.runtime_error) {
-          console.log("Runtime error:", result.runtime_error.message)
+          write_error(result.runtime_error.message)
         }
       }
     </script>
