@@ -95,11 +95,12 @@
         const div = document.getElementById("output")
         div.textContent += text + "\n"
       }
-      const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
 
       console.log("initing")
       await init()
       console.log("init success")
+
+      const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
 
       function click_play() {
         let source = editor_view.state.doc.toString()
