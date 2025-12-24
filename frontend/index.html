@@ -96,7 +96,6 @@
         div.textContent += text + "\n"
       }
       const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
-      interpreter.register_native(printFn)
 
       console.log("initing")
       await init()
