@@ -107,6 +107,7 @@
       }
 
       function write_to_output(text) {
+        const MAX_LINES = 100
         const div = document.getElementById("output")
         const line = document.createElement("div")
         line.textContent = text
