@@ -102,13 +102,19 @@
 
       import init, { WasmVm, JsNativeFn, compile } from "./pkg/bytecode_wasm.js"
 
+      var flush_out = false
+
       function get_input(text) {
-        flush_out = true
         return prompt(text, "")
       }
 
+      function flush() {
+        flush_out = true
+        return null
+      }
+
       function write_to_output(text) {
-        const MAX_LINES = 500
+        const MAX_LINES = 100
         const div = document.getElementById("output")
         const line = document.createElement("div")
         line.textContent = text
@@ -145,10 +151,11 @@
         clear_output()
         const printFn = new JsNativeFn("print", 1, write_to_output)
         const inputFn = new JsNativeFn("input", 1, get_input)
+        const flushFn = new JsNativeFn("flush", 1, flush)
 
         let source = editor_view.state.doc.toString()
 
-        const compilation_result = compile(source, [printFn, inputFn])
+        const compilation_result = compile(source, [printFn, inputFn, flushFn])
         if (compilation_result.success == false) {
           for (let err of compilation_result.take_compile_errors) {
             write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`)
@@ -164,14 +171,13 @@
         run_vm(vm)
       }
 
-      var flush_out = false
-
       function run_vm(vm) {
         const step_count = 10_000
         for (let i = 0; i < step_count; i++) {
           if (flush_out) {
             flush_out = false
-            break
+            setTimeout(() => run_vm(vm), 0)
+            i = 0
           }
           let step = vm.step()
 
