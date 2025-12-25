@@ -103,6 +103,7 @@
       import init, { WasmVm, JsNativeFn, compile } from "./pkg/bytecode_wasm.js"
 
       function get_input(text) {
+        flush_out = true
         return prompt(text, "")
       }
 
@@ -163,9 +164,15 @@
         run_vm(vm)
       }
 
+      var flush_out = false
+
       function run_vm(vm) {
         const step_count = 10_000
         for (let i = 0; i < step_count; i++) {
+          if (flush_out) {
+            flush_out = false
+            break
+          }
           let step = vm.step()
 
           if (step.runtime_error) {
