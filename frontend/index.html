@@ -151,7 +151,7 @@
         clear_output()
         const printFn = new JsNativeFn("print", 1, write_to_output)
         const inputFn = new JsNativeFn("input", 1, get_input)
-        const flushFn = new JsNativeFn("flush", 1, flush)
+        const flushFn = new JsNativeFn("flush", 0, flush)
 
         let source = editor_view.state.doc.toString()
 
