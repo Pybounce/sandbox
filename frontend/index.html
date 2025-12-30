@@ -126,9 +126,6 @@
         while (div.childNodes.length > MAX_LINES) {
           div.removeChild(div.firstChild);
         }
-        requestAnimationFrame(() => {
-          div.scrollTop = div.scrollHeight;
-        });
       }
 
       function write_error(text) {
@@ -142,10 +139,6 @@
         while (div.childNodes.length > 0) {
           div.removeChild(div.firstChild);
         }
-        requestAnimationFrame(() => {
-          div.scrollTop = div.scrollHeight;
-        });
-        div.offsetHeight;
         flush_out = true;
       }
 
@@ -202,7 +195,12 @@
             return;
           }
         }
-        requestAnimationFrame(() => run_vm(vm));
+
+        requestAnimationFrame(() => {
+          const div = document.getElementById("output");
+          div.scrollTop = div.scrollHeight;
+          run_vm(vm);
+        });
       }
     </script>
   </body>
