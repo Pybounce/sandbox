@@ -74,18 +74,18 @@
       </div>
     </div>
     <script type="module">
-      import { EditorView, basicSetup } from "https://esm.sh/codemirror"
-      import { python } from "https://esm.sh/@codemirror/lang-python"
-      import { indentWithTab } from "https://esm.sh/@codemirror/commands"
-      import { keymap } from "https://esm.sh/@codemirror/view"
+      import { EditorView, basicSetup } from "https://esm.sh/codemirror";
+      import { python } from "https://esm.sh/@codemirror/lang-python";
+      import { indentWithTab } from "https://esm.sh/@codemirror/commands";
+      import { keymap } from "https://esm.sh/@codemirror/view";
 
       let editor_view = new EditorView({
         doc: "",
         extensions: [basicSetup, keymap.of([indentWithTab]), python()],
         parent: document.getElementById("editor"),
-      })
+      });
 
-      import { linter } from "https://esm.sh/@codemirror/lint"
+      import { linter } from "https://esm.sh/@codemirror/lint";
 
       function makeLinter(errors) {
         return linter(() => {
@@ -94,89 +94,93 @@
             to: err.start + err.len,
             severity: "error",
             message: "Compile error",
-          }))
-        })
+          }));
+        });
       }
 
-      document.getElementById("play_btn").addEventListener("click", click_play)
+      document.getElementById("play_btn").addEventListener("click", click_play);
 
-      import init, { WasmVm, JsNativeFn, compile } from "./pkg/bytecode_wasm.js"
+      import init, {
+        WasmVm,
+        JsNativeFn,
+        compile,
+      } from "./pkg/bytecode_wasm.js";
 
-      var flush_out = false
+      var flush_out = false;
 
       function get_input(text) {
-        return prompt(text, "")
+        return prompt(text, "");
       }
 
       function flush() {
-        flush_out = true
-        return null
+        flush_out = true;
+        return null;
       }
 
       function random_range(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min
+        return Math.floor(Math.random() * (max - min + 1)) + min;
       }
 
       function to_number(string) {
-        const n = parseFloat(string)
-        return Number.isNaN(n) ? null : n
+        const n = parseFloat(string);
+        return Number.isNaN(n) ? null : n;
       }
 
       function to_string(val) {
         if (val == null) {
-          return null
+          return null;
         }
-        return String(val)
+        return String(val);
       }
 
       function write_to_output(text) {
-        const MAX_LINES = 100
-        const div = document.getElementById("output")
-        const line = document.createElement("div")
-        line.textContent = text
-        div.appendChild(line)
+        const MAX_LINES = 100;
+        const div = document.getElementById("output");
+        const line = document.createElement("div");
+        line.textContent = text;
+        div.appendChild(line);
         while (div.childNodes.length > MAX_LINES) {
-          div.removeChild(div.firstChild)
+          div.removeChild(div.firstChild);
         }
         requestAnimationFrame(() => {
-          div.scrollTop = div.scrollHeight
-        })
-        div.offsetHeight
+          div.scrollTop = div.scrollHeight;
+        });
+        div.offsetHeight;
       }
 
       function write_error(text) {
-        const div = document.getElementById("output")
-        write_to_output("[ERROR] " + text)
+        const div = document.getElementById("output");
+        write_to_output("[ERROR] " + text);
       }
 
       function clear_output() {
-        const div = document.getElementById("output")
-        div.textContent = ""
+        const div = document.getElementById("output");
+        div.textContent = "";
         while (div.childNodes.length > 0) {
-          div.removeChild(div.firstChild)
+          div.removeChild(div.firstChild);
         }
         requestAnimationFrame(() => {
-          div.scrollTop = div.scrollHeight
-        })
-        div.offsetHeight
-        flush_out = true
+          div.scrollTop = div.scrollHeight;
+        });
+        div.offsetHeight;
+        flush_out = true;
       }
 
-      console.log("initing")
-      await init()
-      console.log("init success")
+      console.log("initing");
+      await init();
+      console.log("init success");
 
       function click_play() {
-        clear_output()
-        const printFn = new JsNativeFn("print", 1, write_to_output)
-        const inputFn = new JsNativeFn("input", 1, get_input)
-        const flushFn = new JsNativeFn("flush", 0, flush)
-        const clearFn = new JsNativeFn("clear", 0, clear_output)
-        const randomRangeFn = new JsNativeFn("random_range", 2, random_range)
-        const toNumberFn = new JsNativeFn("number", 1, to_number)
-        const toStringFn = new JsNativeFn("string", 1, to_string)
+        clear_output();
+        const printFn = new JsNativeFn("print", 1, write_to_output);
+        const inputFn = new JsNativeFn("input", 1, get_input);
+        const flushFn = new JsNativeFn("flush", 0, flush);
+        const clearFn = new JsNativeFn("clear", 0, clear_output);
+        const randomRangeFn = new JsNativeFn("random_range", 2, random_range);
+        const toNumberFn = new JsNativeFn("number", 1, to_number);
+        const toStringFn = new JsNativeFn("string", 1, to_string);
 
-        let source = editor_view.state.doc.toString()
+        let source = editor_view.state.doc.toString();
 
         const compilation_result = compile(source, [
           printFn,
@@ -186,42 +190,42 @@
           randomRangeFn,
           toNumberFn,
           toStringFn,
-        ])
+        ]);
 
         if (compilation_result.success == false) {
-          for (let err of compilation_result.take_compile_errors) {
-            write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`)
+          for (let err of compilation_result.take_compile_errors()) {
+            write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`);
           }
           editor_view.dispatch({
             effects: StateEffect.appendConfig.of(
               makeLinter(result.compile_errors)
             ),
-          })
-          return
+          });
+          return;
         }
-        let vm = compilation_result.take_interpreter()
-        run_vm(vm)
+        let vm = compilation_result.take_interpreter();
+        run_vm(vm);
       }
 
       function run_vm(vm) {
-        const step_count = 10_000
+        const step_count = 10_000;
         for (let i = 0; i < step_count; i++) {
           if (flush_out) {
-            flush_out = false
-            break
+            flush_out = false;
+            break;
           }
-          let step = vm.step()
+          let step = vm.step();
 
           if (step.runtime_error) {
-            write_error(step.runtime_error)
-            return
+            write_error(step.runtime_error);
+            return;
           }
 
           if (step.finished == true) {
-            return
+            return;
           }
         }
-        setTimeout(() => run_vm(vm), 0)
+        setTimeout(() => run_vm(vm), 0);
       }
     </script>
   </body>
