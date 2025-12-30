@@ -113,6 +113,8 @@
       }
 
       function flush() {
+        const div = document.getElementById("output");
+        div.offsetHeight;
         flush_out = true;
         return null;
       }
