@@ -73,7 +73,7 @@
         height: 38px;
         border-radius: 4px;
         border: 1px solid var(--border);
-        background: white;
+        background: #f5efe2;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -81,17 +81,22 @@
         transition: background 0.15s ease, color 0.15s ease,
           border-color 0.15s ease, box-shadow 0.15s ease;
         font-size: 16px;
+        font-weight: 500;
         line-height: 0;
         padding: 0;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        color: #2b2b2b;
       }
 
       #run_floating:hover {
-        background: #d6cfc2;
+        background: #ece4d4;
         border-color: rgba(0, 0, 0, 0.25);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
       }
-
+      #run_floating:active {
+        box-shadow: none;
+        background: #e4dccd;
+      }
       #editor .cm-editor {
         font-size: medium;
         height: 100%;
