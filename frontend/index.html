@@ -8,89 +8,96 @@
         --main-bg: rgb(208, 227, 238);
         --editor-bg: rgb(216, 231, 240);
         --editor-highlight: rgb(231, 240, 245);
+        --header-bg: rgb(225, 235, 245);
+        --border-col: rgba(0, 0, 0, 0.15);
       }
 
       html,
       body {
         height: 100%;
         margin: 0;
+        background-color: var(--main-bg);
+        display: flex;
+        flex-direction: column;
       }
-      #editor {
-        max-height: 70%;
-        min-height: 70%;
-        width: 45%;
+
+      #header_bar {
+        height: 50px;
+        width: 100%;
+        background-color: var(--header-bg);
+        border-bottom: 1px solid var(--border-col);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      #header_title {
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .button-play {
+        height: 30px;
+        width: 80px;
+        border: 1px solid var(--border-col);
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      #inner_body {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        height: calc(100% - 50px);
+      }
+
+      #editor,
+      #output {
+        width: 50%;
         overflow: auto;
-        font-size: medium;
         background-color: var(--editor-bg);
+        font-size: medium;
       }
+
+      #divider {
+        width: 1px;
+        background-color: var(--border-col);
+      }
+
       #editor .cm-editor {
         font-size: medium;
         height: 100%;
         width: 100%;
       }
+
       #editor .cm-gutters {
         background-color: var(--editor-bg);
         border: none !important;
       }
+
       #editor .cm-activeLine {
         background-color: var(--editor-highlight) !important;
       }
+
       #editor .cm-activeLineGutter {
         background-color: var(--editor-highlight) !important;
-      }
-      #output {
-        font-size: medium;
-        max-height: 70%;
-        min-height: 70%;
-        width: 45%;
-        overflow: auto;
-        white-space: pre-wrap;
-        flex-direction: column;
-        display: flex;
-        background-color: var(--editor-bg);
-      }
-      #view {
-        height: 90%;
-        margin-left: 10%;
-        margin-right: 10%;
-        margin-top: 50px;
-        margin-bottom: 50px;
-        display: flex;
-        flex-direction: column;
-      }
-      #body {
-        background-color: var(--main-bg);
-      }
-      #inner_body {
-        max-height: 100%;
-        max-width: 100%;
-        min-height: 100%;
-        min-width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-      }
-      #header {
-        height: auto;
-        width: auto;
-        margin-bottom: 50px;
-      }
-      .button-play {
-        min-height: 30px;
-        width: 100px;
-        margin-bottom: 10px;
-        border: 1px solid #000;
       }
     </style>
   </head>
   <body id="body">
-    <div id="view">
-      <h1 id="header">Sandbox</h1>
-      <div id="play_btn" class="button-play"></div>
-      <div id="inner_body">
-        <div id="editor"></div>
-        <div id="output"></div>
-      </div>
+    <div id="header_bar">
+      <div id="header_title">Sandbox</div>
+      <div id="play_btn" class="button-play">Run</div>
+    </div>
+    <div id="inner_body">
+      <div id="editor"></div>
+      <div id="divider"></div>
+      <div id="output"></div>
     </div>
     <script type="module">
       import { EditorView, basicSetup } from "https://esm.sh/codemirror";
