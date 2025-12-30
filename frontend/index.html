@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <title>Bytecode Sandbox</title>
     <style>
+      :root {
+        --main-bg: rgb(208, 227, 238);
+        --editor-bg: rgb(216, 231, 240);
+        --editor-highlight: rgb(231, 240, 245);
+      }
+
       html,
       body {
         height: 100%;
@@ -15,7 +21,7 @@
         width: 45%;
         overflow: auto;
         font-size: medium;
-        background-color: rgb(172, 213, 236);
+        background-color: var(--editor-bg);
       }
       #editor .cm-editor {
         font-size: medium;
@@ -23,8 +29,14 @@
         width: 100%;
       }
       #editor .cm-gutters {
-        background-color: rgb(172, 213, 236);
+        background-color: var(--editor-bg);
         border: none !important;
+      }
+      #editor .cm-activeLine {
+        background-color: var(--editor-highlight) !important;
+      }
+      #editor .cm-activeLineGutter {
+        background-color: var(--editor-highlight) !important;
       }
       #output {
         font-size: medium;
@@ -35,7 +47,7 @@
         white-space: pre-wrap;
         flex-direction: column;
         display: flex;
-        background-color: rgb(172, 213, 236);
+        background-color: var(--editor-bg);
       }
       #view {
         height: 90%;
@@ -47,7 +59,7 @@
         flex-direction: column;
       }
       #body {
-        background-color: rgb(179, 221, 245);
+        background-color: var(--main-bg);
       }
       #inner_body {
         max-height: 100%;
