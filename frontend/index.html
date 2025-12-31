@@ -368,7 +368,14 @@
         flush_out = true;
         return null;
       }
+      const keysDown = {};
 
+      window.addEventListener("keydown", (e) => (keysDown[e.key] = true));
+      window.addEventListener("keyup", (e) => (keysDown[e.key] = false));
+
+      function is_key_down(key) {
+        return !!keysDown[key];
+      }
       function write_to_output(text) {
         const MAX_LINES = 100;
         const div = document.getElementById("output");
@@ -405,12 +412,19 @@
       function compile_source(view) {
         const printFn = new JsNativeFn("print", 1, write_to_output);
         const inputFn = new JsNativeFn("input", 1, get_input);
+        const isKeyDownFn = new JsNativeFn("key_down", 1, is_key_down);
         const flushFn = new JsNativeFn("flush", 0, flush);
         const clearFn = new JsNativeFn("clear", 0, clear_output);
 
         let source = view.state.doc.toString();
 
-        return compile(source, [printFn, inputFn, flushFn, clearFn]);
+        return compile(source, [
+          printFn,
+          inputFn,
+          isKeyDownFn,
+          flushFn,
+          clearFn,
+        ]);
       }
 
       function click_play() {
