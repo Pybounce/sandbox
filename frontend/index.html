@@ -289,6 +289,21 @@
       import { indentWithTab } from "https://esm.sh/@codemirror/commands";
       import { keymap } from "https://esm.sh/@codemirror/view";
       import { Compartment } from "https://esm.sh/@codemirror/state";
+      import { linter } from "https://esm.sh/@codemirror/lint";
+
+      const lint_function = linter((view) => {
+        let compilation_result = compile_source(view);
+        if (compilation_result.success == false) {
+          const compilation_errors = compilation_result.take_compile_errors();
+          return compilation_errors.map((err) => ({
+            from: err.start,
+            to: err.start + err.len,
+            severity: "error",
+            message: err.message,
+          }));
+        }
+        return [];
+      });
 
       const lintCompartment = new Compartment();
 
@@ -299,11 +314,10 @@
           basicSetup,
           keymap.of([indentWithTab]),
           python(),
+          lint_function,
         ],
         parent: document.getElementById("editor"),
       });
-
-      import { linter } from "https://esm.sh/@codemirror/lint";
 
       function makeLinter(errors) {
         return linter(() => {
@@ -391,6 +405,17 @@
       console.log("initing");
       await init();
       console.log("init success");
+
+      function compile_source(view) {
+        const printFn = new JsNativeFn("print", 1, write_to_output);
+        const inputFn = new JsNativeFn("input", 1, get_input);
+        const flushFn = new JsNativeFn("flush", 0, flush);
+        const clearFn = new JsNativeFn("clear", 0, clear_output);
+
+        let source = editor_view.state.doc.toString();
+
+        return compile(source, [printFn, inputFn, flushFn, clearFn]);
+      }
 
       function click_play() {
         clear_output();
