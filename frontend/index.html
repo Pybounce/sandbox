@@ -288,7 +288,6 @@
       import { python } from "https://esm.sh/@codemirror/lang-python";
       import { indentWithTab } from "https://esm.sh/@codemirror/commands";
       import { keymap } from "https://esm.sh/@codemirror/view";
-      import { Compartment } from "https://esm.sh/@codemirror/state";
       import { linter } from "https://esm.sh/@codemirror/lint";
 
       const lint_function = linter((view) => {
@@ -305,12 +304,9 @@
         return [];
       });
 
-      const lintCompartment = new Compartment();
-
       let editor_view = new EditorView({
         doc: "",
         extensions: [
-          lintCompartment.of(linter(() => [])),
           basicSetup,
           keymap.of([indentWithTab]),
           python(),
@@ -412,40 +408,17 @@
         const flushFn = new JsNativeFn("flush", 0, flush);
         const clearFn = new JsNativeFn("clear", 0, clear_output);
 
-        let source = editor_view.state.doc.toString();
+        let source = view.state.doc.toString();
 
         return compile(source, [printFn, inputFn, flushFn, clearFn]);
       }
 
       function click_play() {
         clear_output();
-        editor_view.dispatch({
-          effects: lintCompartment.reconfigure(makeLinter([])),
-        });
-        const printFn = new JsNativeFn("print", 1, write_to_output);
-        const inputFn = new JsNativeFn("input", 1, get_input);
-        const flushFn = new JsNativeFn("flush", 0, flush);
-        const clearFn = new JsNativeFn("clear", 0, clear_output);
 
-        let source = editor_view.state.doc.toString();
-
-        const compilation_result = compile(source, [
-          printFn,
-          inputFn,
-          flushFn,
-          clearFn,
-        ]);
+        const compilation_result = compile_source(editor_view);
 
         if (compilation_result.success == false) {
-          const compilation_errors = compilation_result.take_compile_errors();
-          for (let err of compilation_errors) {
-            write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`);
-          }
-          editor_view.dispatch({
-            effects: lintCompartment.reconfigure(
-              makeLinter(compilation_errors)
-            ),
-          });
           return;
         }
         let vm = compilation_result.take_interpreter();
