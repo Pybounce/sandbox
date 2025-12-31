@@ -321,6 +321,21 @@ export class CompilerErr {
     set len(arg0) {
         wasm.__wbg_set_compilererr_len(this.__wbg_ptr, arg0);
     }
+    /**
+     * @returns {string}
+     */
+    get message() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.compilererr_message(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
 }
 if (Symbol.dispose) CompilerErr.prototype[Symbol.dispose] = CompilerErr.prototype.free;
 

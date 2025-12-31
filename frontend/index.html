@@ -304,7 +304,7 @@
             from: err.start,
             to: err.start + err.len,
             severity: "error",
-            message: "Compile error",
+            message: err.message,
           }));
         });
       }
