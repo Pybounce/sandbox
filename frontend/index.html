@@ -64,7 +64,13 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 0 0 10px;
+        padding-left: 10px;
+      }
+
+      .panel_toolbar_right {
+        display: flex;
+        align-items: center;
+        height: 100%;
       }
 
       .panel_label {
@@ -92,6 +98,35 @@
 
       .panel_run_btn:active {
         background: #dfd6c7;
+      }
+      .panel_dropdown {
+        background: none;
+        border: none;
+        border-left: 1px solid var(--border);
+        font-size: 15px;
+        font-weight: 600;
+        padding: 6px 26px 6px 10px;
+        cursor: pointer;
+        height: 100%;
+        border-radius: 0;
+        appearance: none;
+        position: relative;
+        transition: background 0.15s ease;
+      }
+
+      .panel_dropdown::after {
+        content: "▼";
+        font-size: 10px;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: var(--text);
+      }
+
+      .panel_dropdown:hover {
+        background: var(--highlight);
       }
 
       #editor,
@@ -207,7 +242,16 @@
         <div id="editor_container">
           <div class="panel_toolbar">
             <span class="panel_label">Sandbox</span>
-            <button id="play_btn" class="panel_run_btn">Run Script</button>
+
+            <div class="panel_toolbar_right">
+              <select id="example_dropdown" class="panel_dropdown">
+                <option value="empty">Empty</option>
+                <option value="example1">Example1</option>
+                <option value="example2">Example2</option>
+              </select>
+
+              <button id="play_btn" class="panel_run_btn">Run Script</button>
+            </div>
           </div>
           <div id="editor"></div>
         </div>
@@ -246,7 +290,15 @@
       }
 
       document.getElementById("play_btn").addEventListener("click", click_play);
+      document
+        .getElementById("example_dropdown")
+        .addEventListener("change", (e) => {
+          on_example_select(e.target.value);
+        });
 
+      function on_example_select(example) {
+        console.log(example);
+      }
       import init, {
         WasmVm,
         JsNativeFn,
